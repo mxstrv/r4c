@@ -23,18 +23,22 @@ def create_order(request):
                 return JsonResponse(response, status=HTTPStatus.BAD_REQUEST)
 
             customer, _ = Customer.objects.get_or_create(email=data['email'])
-            robot_status = Robot.objects.filter(serial=data['robot_serial']).exists()
+            robot_status = Robot.objects.filter(
+                serial=data['robot_serial']).exists()
             if not robot_status:
-                Order.objects.get_or_create(customer=customer, robot_serial=data['robot_serial'])
+                Order.objects.get_or_create(
+                    customer=customer, robot_serial=data['robot_serial'])
                 return JsonResponse(
-                    {"message": "this model is out of stock, we will notify you when it is available"},
+                    {"message": "you have been added to wishlist, wait for an e-mail"},
                     status=HTTPStatus.CREATED)
             else:
                 return JsonResponse(
                     {"message": "this robot is available"},
                     status=HTTPStatus.CREATED)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=HTTPStatus.BAD_REQUEST)
+            return JsonResponse(
+                {'error': str(e)}, status=HTTPStatus.BAD_REQUEST
+            )
     return JsonResponse(
         {"error": "Method not allowed"},
         status=HTTPStatus.METHOD_NOT_ALLOWED

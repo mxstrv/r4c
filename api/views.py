@@ -34,17 +34,24 @@ def create_robot(request):
             robot.save()
 
             waiting_list = Order.objects.filter(
-                robot_serial=robot.serial).values_list('customer__email', flat=True)
-            print(list(waiting_list))
+                robot_serial=robot.serial
+            ).values_list('customer__email', flat=True)
+
             if waiting_list:
-                send_order_emails(model=robot.model, version=robot.version, maillist=waiting_list)
+                send_order_emails(
+                    model=robot.model,
+                    version=robot.version,
+                    maillist=waiting_list
+                )
 
             return JsonResponse(
                 {"message": "robot successfully created"},
                 status=HTTPStatus.CREATED
             )
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=HTTPStatus.BAD_REQUEST)
+            return JsonResponse(
+                {'error': str(e)}, status=HTTPStatus.BAD_REQUEST
+            )
     return JsonResponse(
         {"error": "Method not allowed"},
         status=HTTPStatus.METHOD_NOT_ALLOWED

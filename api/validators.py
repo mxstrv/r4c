@@ -7,7 +7,8 @@ def validate_robot_creation(data: dict) -> tuple[bool, dict]:
     Функция валидирует данные о роботе, передаваемые на вход.
     Валидация модели и версии идет с использованием регулярных выражений.
 
-    :param data: Словарь с данными о роботе, включающий в себя модель, версию и дату создания.
+    :param data: Словарь с данными о роботе,
+            включающий в себя модель, версию и дату создания.
     :type data: dict
     :return: Кортеж, первый элемент которого является булевым значением,
              указывающим на успешность валидации,а второй элемент - словарем с
@@ -24,8 +25,10 @@ def validate_robot_creation(data: dict) -> tuple[bool, dict]:
 
     regex_pattern = r"^[A-Z0-9]{2}$"
 
-    if not re.match(regex_pattern, data['model']) or not re.match(regex_pattern, data['version']):
-        return False, {'error': 'model and/or version should be 2 characters max.'}
+    if (not re.match(regex_pattern, data['model'])
+            or not re.match(regex_pattern, data['version'])):
+        return False, {
+            'error': 'model and/or version should be 2 characters max.'}
 
     date_required_format = '%Y-%m-%d %H:%M:%S'
     try:
