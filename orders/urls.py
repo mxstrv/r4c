@@ -1,7 +1,7 @@
 from django.urls import path
 
-from orders.views import download_excel_file
+from orders.views import create_order
 
 urlpatterns = [
-    path('download/', download_excel_file, name='download_excel')
+    path('create-order/', create_order, name='create_order')
 ]

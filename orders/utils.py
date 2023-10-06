@@ -1,37 +1,30 @@
-from openpyxl import Workbook
+from django.core.mail import send_mail
+from django.conf import settings
 
 
-def generate_report(data: list[dict]) -> Workbook:
+def send_order_emails(model, version, mail_list):
     """
-    Генерирует отчет в формате Excel с отдельными листами для каждой модели и версии
-    с количеством произведенных единиц роботов за последнюю неделю.
+   Функция отправляет электронные письма клиентам, которые находятся
+   в листе ожидания.
 
-    :param data: Список словарей, содержащих информацию о моделях.
-    :type data: list[dict]
-
-    :return: Объект книги Excel, содержащий сгенерированный отчет.
-    :rtype: Workbook
+   :param model: Название модели товара.
+   :type model: str
+   :param version: Версия товара.
+   :type version: str
+   :param mail_list: Список адресов электронной почты, на которые будет отправлено уведомление.
+   :type mail_list: list
+   :return: None
     """
-    wb = Workbook()
-    ws = wb.active
-    wb.remove(ws)
+    message_text = f'Добрый день!\n' \
+                   f'Недавно вы интересовались ' \
+                   f'нашим роботом модели {model}, версии {version}.\n' \
+                   'Этот робот теперь в наличии. Если вам подходит' \
+                   ' этот вариант - пожалуйста, свяжитесь с нами'
 
-    for model_data in data:
-        model_name = model_data['model']
-        model_version = model_data['version']
-        week_amount = model_data['week_amount']
-
-        sheet_exists = False
-        for sheet in wb.sheetnames:
-            if sheet == model_name:
-                sheet_exists = True
-                break
-
-        if not sheet_exists:
-            ws = wb.create_sheet(title=model_name)
-            ws.append(('Модель', 'Версия', 'Количество за неделю'))
-        else:
-            ws = wb[model_name]
-
-        ws.append((model_name, model_version, week_amount))
-    return wb
+    send_mail(
+        subject='Робот в наличии',
+        message=message_text,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=mail_list,
+        fail_silently=False
+    )

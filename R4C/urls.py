@@ -2,5 +2,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('api/', include('api.urls')),
-    path('excel/', include('orders.urls'))
+    path('robots/', include('robots.urls')),
+    path('orders/', include('orders.urls'))
 ]

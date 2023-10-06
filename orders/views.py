@@ -1,46 +1,45 @@
-from datetime import datetime, timedelta
+import json
 from http import HTTPStatus
 
-from django.http import JsonResponse, HttpResponse
-from django.db.models import Count
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+from customers.models import Customer
+from orders.validators import validate_order
+from orders.models import Order
 from robots.models import Robot
-from orders.utils import generate_report
 
 
-def download_excel_file(request) -> HttpResponse:
+@csrf_exempt
+def create_order(request):
     """
-    Загружает отчет в формате Excel с информацией о роботах за последнюю неделю.
-
-    :param request: HTTP-запрос.
-    :type request: HttpRequest
-
-    :return: HTTP-ответ с файлом Excel в формате XLSX.
-    :rtype: HttpResponse
+    View-функция, отвечающая за создание и добавление заказа робота
     """
-    days_in_report = 7
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            status, response = validate_order(data)
+            if not status:
+                return JsonResponse(response, status=HTTPStatus.BAD_REQUEST)
 
-    if request.method == 'GET':
-        current_date = datetime.today()
-        previous_week = (current_date - timedelta(days=days_in_report))
-        file_data = (Robot.objects
-                     .filter(created__range=[previous_week, current_date])
-                     .values('model', 'version')
-                     .annotate(week_amount=Count('model')))
-
-        excel_data = generate_report(list(file_data))
-
-        response = HttpResponse(
-            excel_data,
-            content_type='application/vnd.ms-excel')
-        response[
-            'Content-Disposition'] = 'attachment; filename="robots_report.xlsx"'
-
-        excel_data.save(response)
-
-        return response
-    else:
-        return JsonResponse(
-            {"error": "Method not allowed"},
-            status=HTTPStatus.METHOD_NOT_ALLOWED
-        )
+            customer, _ = Customer.objects.get_or_create(email=data['email'])
+            robot_status = Robot.objects.filter(
+                serial=data['robot_serial']).exists()
+            if not robot_status:
+                Order.objects.get_or_create(
+                    customer=customer, robot_serial=data['robot_serial'])
+                return JsonResponse(
+                    {"message": "you have been added to wishlist, wait for an e-mail"},
+                    status=HTTPStatus.CREATED)
+            else:
+                return JsonResponse(
+                    {"message": "this robot is available"},
+                    status=HTTPStatus.CREATED)
+        except Exception as e:
+            return JsonResponse(
+                {'error': str(e)}, status=HTTPStatus.BAD_REQUEST
+            )
+    return JsonResponse(
+        {"error": "Method not allowed"},
+        status=HTTPStatus.METHOD_NOT_ALLOWED
+    )
