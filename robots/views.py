@@ -5,7 +5,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db.models import Count
 
 from robots.models import Robot
-from orders.utils import generate_report
+from robots.utils import generate_report
 
 
 def download_excel_file(request) -> HttpResponse:
