@@ -122,3 +122,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# E-mail backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'orders@robotfactory.com'
+EMAIL_HOST_PASSWORD = '123'
+
+# Здесь необходимо указать данные для почтового сервера, чтобы работала отправка
+# почты. Указать данные можно явно, как в данном примере, либо используя
+# переменные окружения и библиотеку os (os.environ.get("KEY")
