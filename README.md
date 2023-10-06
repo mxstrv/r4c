@@ -1,5 +1,58 @@
 # R4C - Robots for consumers
 
+## Запуск
+
+1. Клонируйте этот репозиторий:
+
+```sh
+git clone git@github.com:mxstrv/r4c.git
+```
+
+2. Перейдите в директорию приложения:
+
+```sh
+cd r4c
+```
+
+3. Создайте и активируйте виртуальное окружение Python
+
+```sh
+python3 -m venv venv
+```
+
+```sh
+source venv/bin/activate
+```
+
+4. Установите зависимости
+
+```sh
+pip install -r requirements.txt
+```
+5. Запустите процесс миграции
+
+```sh
+python manage.py migrate
+```
+6. Запустите сервер
+
+```sh
+python manage.py runserver
+```
+
+### Доступные эндпоинты
+Создание робота, POST запрос, body в формате JSON
+```
+http://127.0.0.1:8000/api/create-robot/
+```
+Загрузка отчета в виде Excel файла
+```
+http://127.0.0.1:8000/robots/download/
+```
+Создание заказа, POST запрос, body JSON
+```
+127.0.0.1:8000/orders/create-order/
+```
 ## Небольшая предыстория.
 Давным-давно, в далёкой-далёкой галактике, была компания производящая различных 
 роботов. 
