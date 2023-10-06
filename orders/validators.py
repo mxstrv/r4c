@@ -1,7 +1,18 @@
 import re
 
 
-def validate_order(data: dict):
+def validate_order(data: dict) -> tuple[bool, dict]:
+    """
+    Функция валидирует данные о заказе.
+
+    :param data: Словарь с данными о заказе, включающий в себя электронную почту клиента и
+    необходимую модель робота.
+    :type data: dict
+    :return: Кортеж, первый элемент которого является булевым значением,
+             указывающим на успешность валидации,а второй элемент - словарем с
+             данными в случае успеха или сообщением об ошибке в случае неудачи.
+    :rtype: tuple[bool, dict]
+    """
     fields = ('customer', 'robot_serial')
 
     for field in fields:
